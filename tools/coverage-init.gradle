@@ -1,0 +1,54 @@
+// Coverage harness (init script) — opt in, deliberately not wired into the build.
+//
+// Why an init script: measuring coverage should not change what a normal
+// `./gradlew test` does, and Android modules need a variant-specific class path
+// that the plain jacoco plugin does not know about.
+//
+// Usage:
+//   ./gradlew -I tools/coverage-init.gradle \
+//       :core:coverageReport :platform:coverageReport :airplay:coverageReport \
+//       :dlna:coverageReport :app:coverageReport
+//
+// Reports: <module>/build/reports/jacoco/coverageReport/coverageReport.xml
+//
+// Two gotchas that cost time when writing this:
+//   - AGP writes unit-test exec data to build/outputs/unit_test_code_coverage,
+//     not to build/jacoco.
+//   - :app has two flavours; including both reports every class twice and
+//     JaCoCo fails with "Error while creating report". Pin one variant.
+allprojects { p ->
+    p.apply plugin: 'jacoco'
+
+    p.tasks.withType(Test).configureEach {
+        jacoco {
+            enabled = true
+        }
+    }
+
+    p.tasks.register('coverageReport', JacocoReport) {
+        // Explicit dependencies: the report reads compiled classes and exec data.
+        dependsOn(p.tasks.matching { it.name.startsWith('compile') && (it.name.endsWith('Kotlin') || it.name.endsWith('Java')) })
+        dependsOn(p.tasks.matching { it instanceof Test })
+        group = 'verification'
+        description = 'Unit-test coverage of the main source set (temporary harness).'
+        // AGP writes unit-test exec data here; plain JVM modules use build/jacoco.
+        executionData.setFrom(p.fileTree(dir: p.buildDir, includes: [
+            'jacoco/*.exec',
+            'outputs/unit_test_code_coverage/*/*.exec',
+        ]))
+        sourceDirectories.setFrom(p.files("${p.projectDir}/src/main/kotlin", "${p.projectDir}/src/main/java"))
+        classDirectories.setFrom(p.fileTree(dir: p.buildDir, includes: [
+            // One variant only: two flavours would report the same class twice.
+            'tmp/kotlin-classes/googletvDebug/**',
+            'tmp/kotlin-classes/debug/**',
+            'intermediates/javac/googletvDebug/classes/**',
+            'intermediates/javac/debug/classes/**',
+            'classes/kotlin/main/**',
+            'classes/java/main/**',
+        ]))
+        reports {
+            xml.required.set(true)
+            html.required.set(false)
+        }
+    }
+}

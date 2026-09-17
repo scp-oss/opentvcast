@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Google TV / Android TV flavour manifest.
+
+  v1 ships AirPlay and DLNA only, so the Google Cast receiver registration
+  (RECEIVER_OPTIONS_PROVIDER_CLASS_NAME meta-data and the Cast LAUNCH/LOAD
+  intent filters) has been removed. Re-adding it requires a Cast application ID
+  registered in the Cast SDK console; see docs/ARCHITECTURE.md before doing so.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
+    <application
+        android:banner="@drawable/app_banner"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

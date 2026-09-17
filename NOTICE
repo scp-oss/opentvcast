@@ -1,0 +1,193 @@
+opentvcast — Third-party notices
+================================
+
+opentvcast is an open-source casting receiver for Android TV.
+Copyright (C) 2026 opentvcast contributors.
+
+This product is licensed under the **GNU General Public License v3.0**
+(see [LICENSE](LICENSE)). GPL-3.0 was not an arbitrary pick — it is the
+**only** licence this project can legally use, for the reason given in
+section 1 below.
+
+Every user-visible string, every source file, and this notice are part of a
+work distributed under GPLv3. If you received a binary build, you are entitled
+to the complete corresponding source under the same licence; see
+<https://github.com/opentvcast/opentvcast> or write to the maintainers.
+
+---
+
+## 1. playfair — GNU GPL
+
+**Location:** `airplay/src/main/cpp/playfair/`
+**Files:** `playfair.c`, `omg_hax.c`, `omg_hax.h`, `playfair.h`,
+`hand_garble.c`, `modified_md5.c`, `sap_hash.c`
+**Origin:** <https://github.com/EstebanKubata/playfair>, as bundled by
+[RPiPlay](https://github.com/FD-/RPiPlay) in its `lib/playfair` directory
+**License:** GNU GPL — upstream states "GNU GPL" **without** a version number.
+**Built as:** `libplayfair.so`
+
+**This component is why opentvcast is GPL-3.0 and cannot be MIT or
+Apache-2.0.**
+
+AirPlay 2 screen mirroring is cryptographically gated behind Apple's FairPlay
+session-key exchange; a receiver that cannot perform it cannot receive a
+mirroring stream at all. Every publicly available FairPlay implementation
+(playfair, RPiPlay, UxPlay, shairplay) is GPL. There is no permissive
+alternative in existence — this is a structural gap in the ecosystem, not an
+oversight on our part.
+
+Because upstream declares no specific version, GPLv2 section 9 applies:
+
+> "If the Program does not specify a version number of this License, you may
+> choose any version ever published by the Free Software Foundation."
+
+opentvcast therefore elects **GPLv3**, which is the version compatible with
+the Apache-2.0 material we combine it with (section 2). Note the compatibility
+is one-way: Apache-2.0 code may be absorbed into a GPLv3 work, but a GPLv2
+work may not absorb Apache-2.0 code, because Apache-2.0's patent-termination
+and indemnity clauses count as "further restrictions" under GPLv2.
+
+**Upstream disclaimer, reproduced verbatim because RPiPlay requires it and
+because we want every reader — user, packager, and lawyer — to see it:**
+
+> "This project makes use of a third-party GPL library for handling FairPlay.
+> The legal status of that library is unclear. Should you be a representative
+> of Apple and have any objections against the legality of the library and its
+> use in this project, please contact me and I'll take the appropriate steps."
+
+**What this component does and does not do:** it performs the FairPlay
+*session-key exchange* carried over the AirPlay `/fp-setup` endpoint. It is
+**not** FairPlay Streaming (FPS), Apple's content DRM. opentvcast cannot play
+FairPlay-protected media (Apple TV+, iTunes purchases, and similar), and has no
+intention of trying — that would require the Apple-supplied KSM binary, which
+Apple has never released for Android.
+
+---
+
+## 2. PhairPlay — Apache License 2.0
+
+**Location:** the Kotlin sources across `core/`, `platform/`, `airplay/`, `dlna/`
+and `app/`, plus the Android resources, the Gradle build scripts, and the
+documentation in `docs/`. (Before the multi-module split everything lived under
+`app/src/main/`; the per-module layout is described in `settings.gradle.kts`.)
+**Origin:** <https://github.com/mazer666/PhairPlay>
+**License:** Apache License 2.0
+
+opentvcast began as a fork of PhairPlay, which is the upstream of the closed
+source "MuCast/幕映" receiver and of the GPLv3 project iMirror. We are
+grateful for the AirPlay 2 protocol stack, the 247 unit tests, the CMake
+native build, and the architecture decision records, all of which we inherit.
+
+Apache-2.0 is one-way compatible with GPLv3, so this material may be
+redistributed as part of a GPLv3 work (see section 1). Portions of it remain
+under Apache-2.0 terms in their own right; nothing in this notice removes any
+right granted by that licence.
+
+Changes we have made relative to PhairPlay are recorded in the git history of
+this repository.
+
+---
+
+## 3. Apple ALAC decoder — Apache License 2.0
+
+**Location:** `airplay/src/main/cpp/alac/`
+**Origin:** <https://github.com/macosforge/alac>
+**License:** Apache License 2.0. Copyright (c) 2011 Apple Inc. All rights
+reserved.
+**Built as:** `libalac.so`
+
+Used to decode the ALAC (Apple Lossless) audio that macOS sends for system
+audio and music. Android TV devices have no hardware ALAC decoder, so a
+software decoder is required. This component carries proper Apache-2.0 headers
+in every file and needs no special handling.
+
+---
+
+## 4. dd-plist — MIT
+
+**Location:** resolved from Maven Central (`com.googlecode.plist:dd-plist`)
+**Origin:** <https://github.com/3breadt/dd-plist>
+**License:** MIT
+
+Binary and XML property-list encoding and decoding.
+
+---
+
+## 5. Bouncy Castle — MIT-style (BC)
+
+**Location:** resolved from Maven Central (`org.bouncycastle:bcprov-jdk18on`)
+**Origin:** <https://www.bouncycastle.org>
+**License:** Bouncy Castle Licence (MIT-style, permissive)
+
+Provides the Ed25519 and X25519 primitives used by AirPlay pairing.
+
+---
+
+## 6. Timber — Apache License 2.0
+
+**Location:** `test-runner/libs/timber-4.7.1-classes.jar` (test-runner only, which
+cannot unpack an AAR without AGP); resolved from Maven Central for the `app` and
+`platform` modules
+**Origin:** <https://github.com/JakeWharton/timber>
+**License:** Apache License 2.0
+
+---
+
+## 7. AndroidX, Kotlin, and Gradle-supplied components
+
+**Location:** resolved from Maven Central and Google Maven
+**Licenses:** Apache License 2.0
+
+Includes androidx.appcompat, androidx.constraintlayout, androidx.core,
+androidx.leanback, androidx.datastore, kotlinx-coroutines, Robolectric and
+JUnit (test scope only), and the Android Gradle Plugin.
+
+---
+
+## 8. Protocol documentation references
+
+These were read as references only. No source code from them is included in
+opentvcast, and no licence obligation arises:
+
+- openairplay/airplay-spec — <https://openairplay.github.io/airplay-spec/>
+- UxPlay — <https://github.com/FDH2/UxPlay> (GPL-3.0)
+- RPiPlay — <https://github.com/FD-/RPiPlay> (see section 1)
+- shairport / ShairPlay
+
+---
+
+## 9. Trademarks
+
+"AirPlay", "AirTunes", "Apple", "Apple TV", "macOS", and "iOS" are trademarks
+of Apple Inc. "Miracast" is a trademark of the Wi-Fi Alliance. "Google Cast",
+"Google TV", and "Chromecast" are trademarks of Google LLC. "Amazon" and
+"Fire TV" are trademarks of Amazon.com, Inc.
+
+opentvcast is not affiliated with, endorsed by, or sponsored by any of these
+companies. The device model string `AppleTV5,3` and the server version
+`220.68` advertised over mDNS are protocol-level identifiers required for
+interoperability with AirPlay senders; they are not a claim of affiliation.
+
+---
+
+## 10. If you redistribute opentvcast
+
+You must meet the GPLv3 obligations, which at minimum means:
+
+1. Passing along this NOTICE and the GPLv3 LICENSE text unchanged.
+2. Providing the complete corresponding source, including the build scripts
+   that produced the binary (GPLv3 section 6). A link to a public repository
+   holding the exact revision is acceptable.
+3. Keeping all copyright and licence headers intact — including those we
+   added to `airplay/src/main/cpp/playfair/`.
+4. Not imposing any further restriction on the exercise of the rights granted
+   by GPLv3.
+5. If you ship opentvcast preinstalled on consumer hardware, additionally
+   providing the "Installation Information" required by GPLv3 section 6 so
+   that users can install modified builds on that hardware.
+
+opentvcast cannot be relicensed as MIT, Apache-2.0, LGPL, or any closed
+licence while it contains the playfair component, and the maintainers do not
+own that component well enough to offer a commercial alternative. If you need
+a permissive or commercial AirPlay receiver, you must obtain an AirPlay/MFi
+licence from Apple and implement the protocol stack independently.
