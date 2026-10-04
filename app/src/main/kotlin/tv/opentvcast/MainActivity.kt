@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
     fun showStreamingScreen() {
         photoScreen.visibility = View.GONE
         nowPlayingScreen.visibility = View.GONE
-        nowPlayingScreen.clear()
+        //nowPlayingScreen.clear()
         pinScreen.visibility = View.GONE
         streamingScreen.visibility = View.VISIBLE
         streamingContainer.visibility = View.VISIBLE
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity() {
     fun hideStreamingScreen() {
         photoScreen.clearPhoto()
         photoScreen.visibility = View.GONE
-        nowPlayingScreen.clear()
+        //nowPlayingScreen.clear()
         nowPlayingScreen.visibility = View.GONE
         pinScreen.visibility = View.GONE
         streamingScreen.visibility = View.VISIBLE
